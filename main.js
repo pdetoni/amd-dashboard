@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
-const path = require('node:path')
+const { app, BrowserWindow, ipcMain } = require('electron')
+const path = require('node:path');
+const sqlite3 = require('sqlite3').verbose();
 
 function createWindow () {
   // Create the browser window.
@@ -8,15 +9,19 @@ function createWindow () {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
+      nodeIntegration: true,
+      preload: path.join(__dirname, './preload.js'),
+      contextIsolation: true,
+      enableRemoteModule: false
+    },
   })
+
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
+
 }
 
 // This method will be called when Electron has finished
@@ -41,3 +46,29 @@ app.on('window-all-closed', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.on('request-database', (event) => {
+  const dbPath = path.join(__dirname, 'roip.db'); // Caminho para o banco de dados
+  const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      console.error('Erro ao abrir o banco de dados:', err.message);
+      event.reply('response-database', []); // Envie uma resposta vazia em caso de erro
+      return;
+    }
+
+    db.all("SELECT * FROM Local", (err, rows) => {
+      if (err) {
+        console.error(err.message);
+        event.reply('response-database', []); // Envie uma resposta vazia em caso de erro
+      } else {
+        event.reply('response-database', rows); // Envie os resultados de volta para o processo de renderização
+      }
+
+      db.close((err) => {
+        if (err) {
+          console.error('Erro ao fechar o banco de dados:', err.message);
+        }
+      });
+    });
+  });
+});

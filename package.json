@@ -4,7 +4,8 @@
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -17,6 +18,12 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^30.1.0"
+    "electron": "^30.1.0",
+    "electron-rebuild": "^3.2.9",
+    "rebuild": "^0.1.2"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "sqlite3": "^5.1.7"
   }
 }
