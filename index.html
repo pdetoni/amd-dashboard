@@ -8,11 +8,44 @@
     <title>Dashboard</title>
   </head>
   <body>
-    <h1>Dashboard</h1>
+    <h1>Local</h1>
     
-    <div id="names">
+    <!-- <div id="names">
       
     </div>
+
+    <ul id="data-list"></ul> -->
+
+    <table id="local">
+      <thead>
+          <tr>
+              <th>id</th>
+              <th>type</th>
+              <th>name</th>
+              <th>mainRoipId</th>
+              <th>secundaryRoipId</th>
+          </tr>
+      </thead>
+      <tbody id="local-body">
+          <!-- Dados serão inseridos aqui -->
+      </tbody>
+  </table>
+
+  <h1>DashboardConfig</h1>
+
+  <table id="dashboardConfig">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>operatorId</th>
+            <th>localAId</th>
+            <th>localBId</th>
+        </tr>
+    </thead>
+    <tbody id="dashboardConfig-body">
+        <!-- Dados serão inseridos aqui -->
+    </tbody>
+</table>
 
     <script src="renderer.js"></script>
   </body>
