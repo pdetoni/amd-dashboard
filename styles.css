@@ -18,6 +18,7 @@ body{
     border: 1px solid #000000;
     padding: 8px;
     text-align: left;
+    color: #FFFFFF;
   }
   
   /* Estilo para as células dos dados */
@@ -59,6 +60,32 @@ body{
     background-color: #bcbcbc;
   }
   
+  #roip {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  /* Estilo para as células do cabeçalho */
+  #roip th {
+    background-color: #1b0067;
+    border: 1px solid #000000;
+    padding: 8px;
+    text-align: left;
+    color: #ffffff;
+  }
+  
+  /* Estilo para as células dos dados */
+  #roip td {
+    border: 1px solid #000000;
+    padding: 8px;
+    text-align: left;
+    background-color: #ffffff;
+  }
+
+  #roip td:hover {
+    background-color: #bcbcbc;
+  }
   
 
   

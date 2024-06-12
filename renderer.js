@@ -68,10 +68,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.electron.ipcRenderer.send('request-database');
 
     window.electron.ipcRenderer.on('response-database', (event, data) => {
-        const { locals, dashboardConfigs } = data;
+        const { locals, dashboardConfigs, roips } = data;
 
         fillTable(locals, "local-body", ["id", "type", "name", "mainRoipId", "secundaryRoipId"]);
         fillTable(dashboardConfigs, "dashboardConfig-body", ["id", "operatorId", "localAId", "localBId"]);
+        fillTable(roips, "roip-body", ["id", "name", "ip", "mac"]);
     });
 });
 

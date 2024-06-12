@@ -78,11 +78,22 @@ ipcMain.on('request-database', (event) => {
       });
     });
 
-    Promise.all([localsPromise, dashboardConfigsPromise]).then(values => {
-      const [locals, dashboardConfigs] = values;
-      event.reply('response-database', { locals, dashboardConfigs }); // Envie os resultados de volta para o processo de renderização
+    let roipsPromise = new Promise((resolve, reject) => {
+      db.all("SELECT * FROM Roip", (err, rows) => {
+        if (err) {
+          console.error('Erro ao obter os Roips:', err.message);
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+
+    Promise.all([localsPromise, dashboardConfigsPromise, roipsPromise]).then(values => {
+      const [locals, dashboardConfigs, roips] = values;
+      event.reply('response-database', { locals, dashboardConfigs, roips }); // Envie os resultados de volta para o processo de renderização
     }).catch(err => {
-      event.reply('response-database', { locals: [], dashboardConfigs: [] }); // Envie uma resposta vazia em caso de erro
+      event.reply('response-database', { locals: [], dashboardConfigs: [], roips: [] }); // Envie uma resposta vazia em caso de erro
     }).finally(() => {
       db.close((err) => {
         if (err) {
