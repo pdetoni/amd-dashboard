@@ -6,8 +6,8 @@ const sqlite3 = require('sqlite3').verbose();
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height:800,
     webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, './preload.js'),
@@ -52,18 +52,38 @@ ipcMain.on('request-database', (event) => {
   const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
       console.error('Erro ao abrir o banco de dados:', err.message);
-      event.reply('response-database', []); // Envie uma resposta vazia em caso de erro
+      event.reply('response-database', { locals: [], dashboardConfigs: [] }); // Envie uma resposta vazia em caso de erro
       return;
     }
 
-    db.all("SELECT * FROM Local", (err, rows) => {
-      if (err) {
-        console.error(err.message);
-        event.reply('response-database', []); // Envie uma resposta vazia em caso de erro
-      } else {
-        event.reply('response-database', rows); // Envie os resultados de volta para o processo de renderização
-      }
+    let localsPromise = new Promise((resolve, reject) => {
+      db.all("SELECT * FROM Local", (err, rows) => {
+        if (err) {
+          console.error('Erro ao obter os locais:', err.message);
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
 
+    let dashboardConfigsPromise = new Promise((resolve, reject) => {
+      db.all("SELECT * FROM DashboardConfig", (err, rows) => {
+        if (err) {
+          console.error('Erro ao obter as configurações do dashboard:', err.message);
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+
+    Promise.all([localsPromise, dashboardConfigsPromise]).then(values => {
+      const [locals, dashboardConfigs] = values;
+      event.reply('response-database', { locals, dashboardConfigs }); // Envie os resultados de volta para o processo de renderização
+    }).catch(err => {
+      event.reply('response-database', { locals: [], dashboardConfigs: [] }); // Envie uma resposta vazia em caso de erro
+    }).finally(() => {
       db.close((err) => {
         if (err) {
           console.error('Erro ao fechar o banco de dados:', err.message);

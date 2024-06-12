@@ -24,12 +24,19 @@ contextBridge.exposeInMainWorld('electron', {
   path: {
     join: (...args) => path.join(...args)
   },
-  getNames: () => {
+  getLocal: () => {
     const sql  = "SELECT * FROM Local";
     let stmt = db.prepare(sql);
     let res = stmt.all();
     return res;
+  },
+  getDashboardConfig: () => {
+    const sql  = "SELECT * FROM DashboardConfig";
+    let stmt = db.prepare(sql);
+    let res = stmt.all();
+    return res;
   }
+  
 });
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -44,12 +51,27 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 
-const getNames = () => {
-  return testMngr.getNames();
+const getLocal = () => {
+  return testMngr.getLocal();
+}
+
+const getDashboardConfig = () => {
+  return testMngr.getDashboardConfig();
+}
+
+const getRoip = () => {
+  return testMngr.getRoip();
 }
 
 contextBridge.exposeInMainWorld("api",{
-  getNames: getNames
+  geLocal: getLocal
 })
 
+contextBridge.exposeInMainWorld("api",{
+  getDashboardConfig: getDashboardConfig
+})
+
+contextBridge.exposeInMainWorld("api",{
+  getRoip: getRoip
+})
 
