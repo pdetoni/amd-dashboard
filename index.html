@@ -2,66 +2,56 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
     <link href="./styles.css" rel="stylesheet">
     <title>Dashboard</title>
   </head>
   <body>
-    <h1>Local</h1>
-    
-    <!-- <div id="names">
-      
-    </div>
-
-    <ul id="data-list"></ul> -->
-
-    <table id="local">
+    <h1 id="local-title" style="margin-top: 10px;"><span class="arrow">&rarr;</span>Local</h1>
+    <table id="local" class="hidden">
       <thead>
           <tr>
               <th>id</th>
               <th>type</th>
               <th>name</th>
               <th>mainRoipId</th>
-              <th>secondaryRoipId</th>
+              <th>secundaryRoipId</th>
           </tr>
       </thead>
       <tbody id="local-body">
-          <!-- Dados serão inseridos aqui -->
+          
       </tbody>
-  </table>
+    </table>
 
-  <h1>DashboardConfig</h1>
+    <h1 id="dashboardConfig-title"><span class="arrow">&rarr;</span>DashboardConfig</h1>
+    <table id="dashboardConfig" class="hidden">
+      <thead>
+          <tr>
+              <th>id</th>
+              <th>operatorId</th>
+              <th>localAId</th>
+              <th>localBId</th>
+          </tr>
+      </thead>
+      <tbody id="dashboardConfig-body">
+          
+      </tbody>
+    </table>
 
-  <table id="dashboardConfig">
-    <thead>
-        <tr>
-            <th>id</th>
-            <th>operatorId</th>
-            <th>localAId</th>
-            <th>localBId</th>
-        </tr>
-    </thead>
-    <tbody id="dashboardConfig-body">
-        <!-- Dados serão inseridos aqui -->
-    </tbody>
-</table>
-
-<h1>Roip</h1>
-
-  <table id="roip">
-    <thead>
-        <tr>
-            <th>id</th>
-            <th>name</th>
-            <th>ip</th>
-            <th>mac</th>
-        </tr>
-    </thead>
-    <tbody id="roip-body">
-        <!-- Dados serão inseridos aqui -->
-    </tbody>
-</table>
+    <h1 id="roip-title"><span class="arrow">&rarr;</span>Roip</h1>
+    <table id="roip" class="hidden">
+      <thead>
+          <tr>
+              <th>id</th>
+              <th>name</th>
+              <th>ip</th>
+              <th>mac</th>
+          </tr>
+      </thead>
+      <tbody id="roip-body">
+          
+      </tbody>
+    </table>
 
     <script src="renderer.js"></script>
   </body>

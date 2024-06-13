@@ -36,7 +36,6 @@ contextBridge.exposeInMainWorld('electron', {
     let res = stmt.all();
     return res;
   }
-  
 });
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -50,7 +49,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-
+// Funções adicionais para gerenciar as APIs
 const getLocal = () => {
   return testMngr.getLocal();
 }
@@ -63,15 +62,9 @@ const getRoip = () => {
   return testMngr.getRoip();
 }
 
-contextBridge.exposeInMainWorld("api",{
-  geLocal: getLocal
-})
-
-contextBridge.exposeInMainWorld("api",{
-  getDashboardConfig: getDashboardConfig
-})
-
-contextBridge.exposeInMainWorld("api",{
+// Unificar a exposição de APIs no contexto do renderizador
+contextBridge.exposeInMainWorld("api", {
+  getLocal: getLocal,
+  getDashboardConfig: getDashboardConfig,
   getRoip: getRoip
-})
-
+});

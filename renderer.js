@@ -65,8 +65,10 @@
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Enviar solicitação ao processo principal para obter dados do banco de dados
     window.electron.ipcRenderer.send('request-database');
 
+    // Receber resposta do processo principal com os dados do banco de dados
     window.electron.ipcRenderer.on('response-database', (event, data) => {
         const { locals, dashboardConfigs, roips } = data;
 
@@ -74,6 +76,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         fillTable(dashboardConfigs, "dashboardConfig-body", ["id", "operatorId", "localAId", "localBId"]);
         fillTable(roips, "roip-body", ["id", "name", "ip", "mac"]);
     });
+
+    // Adicionar funcionalidade de alternar visibilidade das tabelas ao clicar nos títulos
+    const toggleVisibility = (titleId, tableId) => {
+        const titleElement = document.getElementById(titleId);
+        const tableElement = document.getElementById(tableId);
+        const arrowElement = titleElement.querySelector('.arrow');
+
+        titleElement.addEventListener('click', () => {
+            tableElement.classList.toggle('hidden');
+            arrowElement.classList.toggle('down');
+        });
+    };
+
+    toggleVisibility('local-title', 'local');
+    toggleVisibility('dashboardConfig-title', 'dashboardConfig');
+    toggleVisibility('roip-title', 'roip');
 });
 
 function fillTable(rows, tableId, columns) {
@@ -90,3 +108,4 @@ function fillTable(rows, tableId, columns) {
         });
     });
 }
+

@@ -6,7 +6,24 @@ body{
     background-color: #a1c5fa;
 }
 
-/* Estilo para a tabela */
+.hidden {
+  display: none;
+}
+h1 {
+  cursor: pointer;
+  user-select: none;
+}
+
+.arrow {
+  display: inline-block;
+  margin-left: 5px;
+  transition: transform 0.2s;
+}
+
+.down {
+  transform: rotate(90deg);
+}
+
 #local {
     width: 100%;
     border-collapse: collapse;
