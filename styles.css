@@ -3,7 +3,7 @@
 /* Add styles here to customize the appearance of your app */
 
 body{
-    background-color: #a1c5fa;
+    background-color: #0066ff;
 }
 
 .hidden {
@@ -12,6 +12,11 @@ body{
 h1 {
   cursor: pointer;
   user-select: none;
+  }
+
+h1:hover{
+  background-color: #000000;
+  color: #fff;
 }
 
 .arrow {
