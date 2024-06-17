@@ -21,7 +21,6 @@ h1:hover{
 
 .arrow {
   display: inline-block;
-  margin-left: 5px;
   transition: transform 0.2s;
 }
 
@@ -39,7 +38,7 @@ h1:hover{
     background-color: #1569b8;
     border: 1px solid #000000;
     padding: 8px;
-    text-align: left;
+    text-align: center;
     color: #FFFFFF;
   }
   
@@ -47,7 +46,7 @@ h1:hover{
   #local td {
     border: 1px solid #000000;
     padding: 8px;
-    text-align: left;
+    text-align: center;
     background-color: #ffffff;
   }
   
@@ -58,7 +57,6 @@ h1:hover{
   #dashboardConfig {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
   }
   
   /* Estilo para as células do cabeçalho */
@@ -66,7 +64,7 @@ h1:hover{
     background-color: #370eaa;
     border: 1px solid #000000;
     padding: 8px;
-    text-align: left;
+    text-align: center;
     color: #ffffff;
   }
   
@@ -74,7 +72,7 @@ h1:hover{
   #dashboardConfig td {
     border: 1px solid #000000;
     padding: 8px;
-    text-align: left;
+    text-align: center;
     background-color: #ffffff;
   }
 
@@ -85,7 +83,6 @@ h1:hover{
   #roip {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
   }
   
   /* Estilo para as células do cabeçalho */
@@ -93,7 +90,7 @@ h1:hover{
     background-color: #1b0067;
     border: 1px solid #000000;
     padding: 8px;
-    text-align: left;
+    text-align: center;
     color: #ffffff;
   }
   
@@ -101,7 +98,7 @@ h1:hover{
   #roip td {
     border: 1px solid #000000;
     padding: 8px;
-    text-align: left;
+    text-align: center;
     background-color: #ffffff;
   }
 
