@@ -1,17 +1,18 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // Enviar solicitação ao processo principal para obter dados do banco de dados
     window.electron.ipcRenderer.send('request-database');
 
-    // Receber resposta do processo principal com os dados do banco de dados
     window.electron.ipcRenderer.on('response-database', (event, data) => {
         const { locals, dashboardConfigs, roips } = data;
 
         fillTable(locals, "local-body", ["id", "type", "name", "mainRoipId", "secundaryRoipId"], editLocal, deleteLocal);
-        fillTable(dashboardConfigs, "dashboardConfig-body", ["id", "operatorId", "localAId", "localBId"], editDashboardConfig, deleteDashboardConfig);
+        fillTable(dashboardConfigs, "dashboardConfig-body", ["id", "operatorId", "localAId", "localBId"], editDashboardConfig);
         fillTable(roips, "roip-body", ["id", "name", "ip", "mac"], editRoip, deleteRoip);
+
+        document.getElementById('local').classList.remove('hidden');
+        document.getElementById('dashboardConfig').classList.remove('hidden');
+        document.getElementById('roip').classList.remove('hidden');
     });
 
-    // Adicionar funcionalidade de alternar visibilidade das tabelas ao clicar nos títulos
     const toggleVisibility = (titleId, tableId) => {
         const titleElement = document.getElementById(titleId);
         const tableElement = document.getElementById(tableId);
@@ -26,22 +27,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleVisibility('local-title', 'local');
     toggleVisibility('dashboardConfig-title', 'dashboardConfig');
     toggleVisibility('roip-title', 'roip');
+
+    // Função para enviar dados editados
+    const sendData = (channel, data) => {
+        window.electron.ipcRenderer.send(channel, data);
+    };
+
+    // Lidar com envio de formulário do modal de Local
+    document.getElementById('save-local-btn').addEventListener('click', () => {
+        const data = {
+            id: document.getElementById('localModal').dataset.id,
+            type: document.getElementById('type-input').value,
+            name: document.getElementById('name-input').value,
+            mainRoipId: document.getElementById('main-input').value,
+            secundaryRoipId: document.getElementById('sec-input').value,
+        };
+        sendData('edit-local', data);
+        bootstrap.Modal.getInstance(document.getElementById('localModal')).hide();
+        location.reload();
+    });
+
+    // Lidar com envio de formulário do modal de DashboardConfig
+    document.getElementById('save-dashboardConfig-btn').addEventListener('click', () => {
+        const data = {
+            id: document.getElementById('dashboardConfigModal').dataset.id,
+            operatorId: document.getElementById('operator-input').value,
+            localAId: document.getElementById('a-input').value,
+            localBId: document.getElementById('b-input').value,
+        };
+        sendData('edit-dashboardConfig', data);
+        bootstrap.Modal.getInstance(document.getElementById('dashboardConfigModal')).hide();
+        location.reload();
+    });
+
+    // Lidar com envio de formulário do modal de Roip
+    document.getElementById('save-roip-btn').addEventListener('click', () => {
+        const data = {
+            id: document.getElementById('roipModal').dataset.id,
+            name: document.getElementById('rname-input').value,
+            ip: document.getElementById('ip-input').value,
+            mac: document.getElementById('mac-input').value,
+        };
+        sendData('edit-roip', data);
+        bootstrap.Modal.getInstance(document.getElementById('roipModal')).hide();
+        location.reload();
+    });
 });
 
 function fillTable(rows, tableId, columns, editFunction, deleteFunction) {
     let tableBody = document.getElementById(tableId);
 
-    // Limpa o corpo da tabela antes de adicionar novos dados
     tableBody.innerHTML = '';
 
-    // Itera sobre os dados recebidos e adiciona cada item como uma nova linha na tabela
     rows.forEach(row => {
         let newRow = tableBody.insertRow();
         columns.forEach((column, index) => {
             newRow.insertCell(index).textContent = row[column];
         });
 
-        // Adiciona célula com botão de editar
         let editCell = newRow.insertCell(columns.length);
         let editButton = document.createElement('button');
         editButton.className = 'btn btn-warning';
@@ -49,60 +92,46 @@ function fillTable(rows, tableId, columns, editFunction, deleteFunction) {
         editButton.onclick = () => editFunction(row);
         editCell.appendChild(editButton);
 
-        // Adiciona célula com botão de excluir
-        let deleteCell = newRow.insertCell(columns.length + 1);
-        let deleteButton = document.createElement('button');
-        deleteButton.className = 'btn btn-danger';
-        deleteButton.textContent = 'Excluir';
-        deleteButton.onclick = () => deleteFunction(row.id);
-        deleteCell.appendChild(deleteButton);
+        if (deleteFunction) {
+            let deleteCell = newRow.insertCell(columns.length + 1);
+            let deleteButton = document.createElement('button');
+            deleteButton.className = 'btn btn-danger';
+            deleteButton.textContent = 'Excluir';
+            deleteButton.onclick = () => deleteFunction(row.id);
+            deleteCell.appendChild(deleteButton);
+        }
     });
 }
 
 function editLocal(row) {
-    // Lógica para editar um item local
-    console.log('Edit local:', row);
-    document.getElementById('localModalLabel').textContent = `Editando Local: ${row.id}`;
-    // Preencher o conteúdo do modal com os dados do local
-    // document.getElementById('localModalBody').innerHTML = `<p>ID: ${row.id}</p><p>Type: ${row.type}</p><p>Name: ${row.name}</p>`;
-    // Abre o modal local
+    document.getElementById('localModal').dataset.id = row.id;
+    document.getElementById('type-input').value = row.type;
+    document.getElementById('name-input').value = row.name;
+    document.getElementById('main-input').value = row.mainRoipId;
+    document.getElementById('sec-input').value = row.secundaryRoipId;
     new bootstrap.Modal(document.getElementById('localModal')).show();
 }
 
 function deleteLocal(id) {
-    // Lógica para excluir um item local
-    console.log('Delete local with id:', id);
     window.electron.ipcRenderer.send('delete-local', id);
 }
 
 function editDashboardConfig(row) {
-    // Lógica para editar uma configuração de dashboard
-    console.log('Edit dashboard config:', row);
-    document.getElementById('dashboardConfigModalLabel').textContent = `Editando Configuração: ${row.id}`;
-    // Preencher o conteúdo do modal com os dados da configuração
-    // document.getElementById('dashboardConfigModalBody').innerHTML = `<p>ID: ${row.id}</p><p>Operator ID: ${row.operatorId}</p>`;
-    // Abre o modal de configuração do dashboard
+    document.getElementById('dashboardConfigModal').dataset.id = row.id;
+    document.getElementById('operator-input').value = row.operatorId;
+    document.getElementById('a-input').value = row.localAId;
+    document.getElementById('b-input').value = row.localBId;
     new bootstrap.Modal(document.getElementById('dashboardConfigModal')).show();
 }
 
-function deleteDashboardConfig(id) {
-    // Lógica para excluir uma configuração de dashboard
-    console.log('Delete dashboard config with id:', id);
-    window.electron.ipcRenderer.send('delete-dashboard-config', id);
-}
-
 function editRoip(row) {
-    // Lógica para editar um roip
-    console.log('Edit roip:', row);
-    document.getElementById('roipModalLabel').textContent = `Editando Roip: ${row.id}`;
-    // Preencher o conteúdo do modal com os dados do roip
-    // document.getElementById('roipModalBody').innerHTML = `<p>ID: ${row.id}</p><p>Name: ${row.name}</p>`;
-    // Abre o modal roip
+    document.getElementById('roipModal').dataset.id = row.id;
+    document.getElementById('rname-input').value = row.name;
+    document.getElementById('ip-input').value = row.ip;
+    document.getElementById('mac-input').value = row.mac;
     new bootstrap.Modal(document.getElementById('roipModal')).show();
 }
 
 function deleteRoip(id) {
-    // Lógica para excluir um roip
-    console.log('Delete roip with id:', id);
     window.electron.ipcRenderer.send('delete-roip', id);
 }
