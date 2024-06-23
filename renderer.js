@@ -8,32 +8,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         fillTable(dashboardConfigs, "dashboardConfig-body", ["id", "operatorId", "localAId", "localBId"], editDashboardConfig);
         fillTable(roips, "roip-body", ["id", "name", "ip", "mac"], editRoip, deleteRoip);
 
-        document.getElementById('local').classList.remove('hidden');
-        document.getElementById('dashboardConfig').classList.remove('hidden');
-        document.getElementById('roip').classList.remove('hidden');
+        document.getElementById('local').style.display = '';
+        document.getElementById('add-local-btn').style.display = '';
+        document.getElementById('dashboardConfig').style.display = '';
+        document.getElementById('add-dashboardConfig-btn').style.display = '';
+        document.getElementById('roip').style.display = '';
+        document.getElementById('add-roip-btn').style.display = '';
     });
 
-    const toggleVisibility = (titleId, tableId) => {
+    const toggleVisibility = (titleId, tableId, buttonId) => {
         const titleElement = document.getElementById(titleId);
         const tableElement = document.getElementById(tableId);
+        const buttonElement = document.getElementById(buttonId);
         const arrowElement = titleElement.querySelector('.arrow');
 
         titleElement.addEventListener('click', () => {
-            tableElement.classList.toggle('hidden');
-            arrowElement.classList.toggle('down');
+            const isHidden = tableElement.style.display === 'none';
+            tableElement.style.display = isHidden ? '' : 'none';
+            buttonElement.style.display = isHidden ? '' : 'none';
+            arrowElement.classList.toggle('down', isHidden);
         });
     };
 
-    toggleVisibility('local-title', 'local');
-    toggleVisibility('dashboardConfig-title', 'dashboardConfig');
-    toggleVisibility('roip-title', 'roip');
+    toggleVisibility('local-title', 'local', 'add-local-btn');
+    toggleVisibility('dashboardConfig-title', 'dashboardConfig', 'add-dashboardConfig-btn');
+    toggleVisibility('roip-title', 'roip', 'add-roip-btn');
 
-    // Função para enviar dados editados
+    // Function to send edited data
     const sendData = (channel, data) => {
         window.electron.ipcRenderer.send(channel, data);
     };
 
-    // Lidar com envio de formulário do modal de Local
+    // Handle form submission for Local modal
     document.getElementById('save-local-btn').addEventListener('click', () => {
         const data = {
             id: document.getElementById('localModal').dataset.id,
@@ -47,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         location.reload();
     });
 
-    // Lidar com envio de formulário do modal de DashboardConfig
+    // Handle form submission for DashboardConfig modal
     document.getElementById('save-dashboardConfig-btn').addEventListener('click', () => {
         const data = {
             id: document.getElementById('dashboardConfigModal').dataset.id,
@@ -60,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         location.reload();
     });
 
-    // Lidar com envio de formulário do modal de Roip
+    // Handle form submission for Roip modal
     document.getElementById('save-roip-btn').addEventListener('click', () => {
         const data = {
             id: document.getElementById('roipModal').dataset.id,
@@ -71,6 +77,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         sendData('edit-roip', data);
         bootstrap.Modal.getInstance(document.getElementById('roipModal')).hide();
         location.reload();
+    });
+
+    // Handle confirmed deletion
+    document.getElementById('delete-btn').addEventListener('click', () => {
+        const id = document.getElementById('excluirModal').dataset.id;
+        sendData('delete-roip', id);
+        bootstrap.Modal.getInstance(document.getElementById('excluirModal')).hide();
+        location.reload();
+    });
+
+    // Handle "Add Local" button click
+    document.getElementById('add-local-btn').addEventListener('click', () => {
+        document.getElementById('localModal').dataset.id = '';
+        document.getElementById('type-input').value = '';
+        document.getElementById('name-input').value = '';
+        document.getElementById('main-input').value = '';
+        document.getElementById('sec-input').value = '';
+        new bootstrap.Modal(document.getElementById('localModal')).show();
+    });
+
+    // Handle "Add DashboardConfig" button click
+    document.getElementById('add-dashboardConfig-btn').addEventListener('click', () => {
+        document.getElementById('dashboardConfigModal').dataset.id = '';
+        document.getElementById('operator-input').value = '';
+        document.getElementById('a-input').value = '';
+        document.getElementById('b-input').value = '';
+        new bootstrap.Modal(document.getElementById('dashboardConfigModal')).show();
+    });
+
+    // Handle "Add Roip" button click
+    document.getElementById('add-roip-btn').addEventListener('click', () => {
+        document.getElementById('roipModal').dataset.id = '';
+        document.getElementById('rname-input').value = '';
+        document.getElementById('ip-input').value = '';
+        document.getElementById('mac-input').value = '';
+        new bootstrap.Modal(document.getElementById('roipModal')).show();
     });
 });
 
@@ -113,7 +155,7 @@ function editLocal(row) {
 }
 
 function deleteLocal(id) {
-    window.electron.ipcRenderer.send('delete-local', id);
+    confirmDelete('delete-local', id);
 }
 
 function editDashboardConfig(row) {
@@ -133,5 +175,11 @@ function editRoip(row) {
 }
 
 function deleteRoip(id) {
-    window.electron.ipcRenderer.send('delete-roip', id);
+    confirmDelete('delete-roip', id);
+}
+
+function confirmDelete(channel, id) {
+    document.getElementById('excluirModal').dataset.channel = channel;
+    document.getElementById('excluirModal').dataset.id = id;
+    new bootstrap.Modal(document.getElementById('excluirModal')).show();
 }
