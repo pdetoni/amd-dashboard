@@ -1,17 +1,19 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    window.electron.ipcRenderer.send('request-database');
+    const fetchData = () => {
+        window.electron.ipcRenderer.send('request-database');
+    };
+
+    fetchData();
 
     window.electron.ipcRenderer.on('response-database', (event, data) => {
         const { locals, dashboardConfigs, roips } = data;
 
-        fillTable(locals, "local-body", ["id", "type", "name", "mainRoipId", "secundaryRoipId"], editLocal, deleteLocal);
+        fillTable(locals, "local-body", ["id", "type", "name", "mainRoipId", "secundaryRoipId"]);
         fillTable(dashboardConfigs, "dashboardConfig-body", ["id", "operatorId", "localAId", "localBId"], editDashboardConfig);
         fillTable(roips, "roip-body", ["id", "name", "ip", "mac"], editRoip, deleteRoip);
 
         document.getElementById('local').style.display = '';
-        document.getElementById('add-local-btn').style.display = '';
         document.getElementById('dashboardConfig').style.display = '';
-        document.getElementById('add-dashboardConfig-btn').style.display = '';
         document.getElementById('roip').style.display = '';
         document.getElementById('add-roip-btn').style.display = '';
     });
@@ -30,30 +32,55 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
 
-    toggleVisibility('local-title', 'local', 'add-local-btn');
-    toggleVisibility('dashboardConfig-title', 'dashboardConfig', 'add-dashboardConfig-btn');
+    toggleVisibility('local-title', 'local', 'add-roip-btn');
+    toggleVisibility('dashboardConfig-title', 'dashboardConfig', 'add-roip-btn');
     toggleVisibility('roip-title', 'roip', 'add-roip-btn');
 
-    // Function to send edited data
     const sendData = (channel, data) => {
         window.electron.ipcRenderer.send(channel, data);
     };
 
-    // Handle form submission for Local modal
-    document.getElementById('save-local-btn').addEventListener('click', () => {
+    document.getElementById('save-roip-btn').addEventListener('click', () => {
         const data = {
-            id: document.getElementById('localModal').dataset.id,
-            type: document.getElementById('type-input').value,
-            name: document.getElementById('name-input').value,
-            mainRoipId: document.getElementById('main-input').value,
-            secundaryRoipId: document.getElementById('sec-input').value,
+            id: document.getElementById('roipModal').dataset.id,
+            name: document.getElementById('rname-input').value,
+            ip: document.getElementById('ip-input').value,
+            mac: document.getElementById('mac-input').value,
         };
-        sendData('edit-local', data);
-        bootstrap.Modal.getInstance(document.getElementById('localModal')).hide();
+
+        if (validateIp(data.ip) && validateMac(data.mac)) {
+            sendData('edit-roip', data);
+            bootstrap.Modal.getInstance(document.getElementById('roipModal')).hide();
+            fetchData();
+            location.reload();
+        } else {
+            showWarningModal('Endereço IP ou MAC inválido!');
+        }
+    });
+
+    document.getElementById('delete-btn').addEventListener('click', () => {
+        const id = document.getElementById('excluirModal').dataset.id;
+        sendData('delete-roip', id);
+        bootstrap.Modal.getInstance(document.getElementById('excluirModal')).hide();
         location.reload();
     });
 
-    // Handle form submission for DashboardConfig modal
+    document.getElementById('save-add-roip-btn').addEventListener('click', () => {
+        const data = {
+            name: document.getElementById('add-rname-input').value,
+            ip: document.getElementById('add-ip-input').value,
+            mac: document.getElementById('add-mac-input').value,
+        };
+
+        if (validateIp(data.ip) && validateMac(data.mac)) {
+            sendData('add-roip', data);
+            bootstrap.Modal.getInstance(document.getElementById('addRoipModal')).hide();
+            fetchData();
+        } else {
+            showWarningModal('Endereço IP ou MAC inválido!');
+        }
+    });
+
     document.getElementById('save-dashboardConfig-btn').addEventListener('click', () => {
         const data = {
             id: document.getElementById('dashboardConfigModal').dataset.id,
@@ -66,60 +93,57 @@ document.addEventListener('DOMContentLoaded', async () => {
         location.reload();
     });
 
-    // Handle form submission for Roip modal
-    document.getElementById('save-roip-btn').addEventListener('click', () => {
+    // const localForm = document.getElementById('local-form');
+    // localForm.addEventListener('submit', (event) => {
+    //     event.preventDefault();
+    //     const data = {
+    //         type: document.getElementById('type-input').value,
+    //         name: document.getElementById('name-input').value,
+    //         mainRoipId: document.getElementById('main-input').value,
+    //         secundaryRoipId: document.getElementById('sec-input').value,
+    //     };
+    //     sendData('add-local', data);
+    //     bootstrap.Modal.getInstance(document.getElementById('localModal')).hide();
+    //     fetchData();
+    // });
+
+    // const dashboardConfigForm = document.getElementById('dashboardConfig-form');
+    // dashboardConfigForm.addEventListener('submit', (event) => {
+    //     event.preventDefault();
+    //     const data = {
+    //         operatorId: document.getElementById('operator-input').value,
+    //         localAId: document.getElementById('a-input').value,
+    //         localBId: document.getElementById('b-input').value,
+    //     };
+    //     sendData('add-dashboardConfig', data);
+    //     bootstrap.Modal.getInstance(document.getElementById('dashboardConfigModal')).hide();
+    //     fetchData();
+    // });
+
+    const roipForm = document.getElementById('roip-form');
+    roipForm.addEventListener('submit', (event) => {
+        event.preventDefault();
         const data = {
-            id: document.getElementById('roipModal').dataset.id,
-            name: document.getElementById('rname-input').value,
-            ip: document.getElementById('ip-input').value,
-            mac: document.getElementById('mac-input').value,
+            name: document.getElementById('add-rname-input').value,
+            ip: document.getElementById('add-ip-input').value,
+            mac: document.getElementById('add-mac-input').value,
         };
-        sendData('edit-roip', data);
-        bootstrap.Modal.getInstance(document.getElementById('roipModal')).hide();
-        location.reload();
-    });
-
-    // Handle confirmed deletion
-    document.getElementById('delete-btn').addEventListener('click', () => {
-        const id = document.getElementById('excluirModal').dataset.id;
-        sendData('delete-roip', id);
-        bootstrap.Modal.getInstance(document.getElementById('excluirModal')).hide();
-        location.reload();
-    });
-
-    // Handle "Add Local" button click
-    document.getElementById('add-local-btn').addEventListener('click', () => {
-        document.getElementById('localModal').dataset.id = '';
-        document.getElementById('type-input').value = '';
-        document.getElementById('name-input').value = '';
-        document.getElementById('main-input').value = '';
-        document.getElementById('sec-input').value = '';
-        new bootstrap.Modal(document.getElementById('localModal')).show();
-    });
-
-    // Handle "Add DashboardConfig" button click
-    document.getElementById('add-dashboardConfig-btn').addEventListener('click', () => {
-        document.getElementById('dashboardConfigModal').dataset.id = '';
-        document.getElementById('operator-input').value = '';
-        document.getElementById('a-input').value = '';
-        document.getElementById('b-input').value = '';
-        new bootstrap.Modal(document.getElementById('dashboardConfigModal')).show();
-    });
-
-    // Handle "Add Roip" button click
-    document.getElementById('add-roip-btn').addEventListener('click', () => {
-        document.getElementById('roipModal').dataset.id = '';
-        document.getElementById('rname-input').value = '';
-        document.getElementById('ip-input').value = '';
-        document.getElementById('mac-input').value = '';
-        new bootstrap.Modal(document.getElementById('roipModal')).show();
+        if (validateIp(data.ip) && validateMac(data.mac)) {
+            sendData('add-roip', data);
+            bootstrap.Modal.getInstance(document.getElementById('addRoipModal')).hide();
+            fetchData();
+            location.reload();
+        } else {
+            showWarningModal('Endereço IP ou MAC inválido!');
+        }
     });
 });
 
+// Função para preencher tabela com dados e botões de edição/exclusão
 function fillTable(rows, tableId, columns, editFunction, deleteFunction) {
     let tableBody = document.getElementById(tableId);
 
-    tableBody.innerHTML = '';
+    tableBody.innerHTML = ''; // Limpar conteúdo da tabela
 
     rows.forEach(row => {
         let newRow = tableBody.insertRow();
@@ -127,12 +151,14 @@ function fillTable(rows, tableId, columns, editFunction, deleteFunction) {
             newRow.insertCell(index).textContent = row[column];
         });
 
-        let editCell = newRow.insertCell(columns.length);
-        let editButton = document.createElement('button');
-        editButton.className = 'btn btn-warning';
-        editButton.textContent = 'Editar';
-        editButton.onclick = () => editFunction(row);
-        editCell.appendChild(editButton);
+        if (editFunction) {
+            let editCell = newRow.insertCell(columns.length);
+            let editButton = document.createElement('button');
+            editButton.className = 'btn btn-warning';
+            editButton.textContent = 'Editar';
+            editButton.onclick = () => editFunction(row);
+            editCell.appendChild(editButton);
+        }
 
         if (deleteFunction) {
             let deleteCell = newRow.insertCell(columns.length + 1);
@@ -145,6 +171,25 @@ function fillTable(rows, tableId, columns, editFunction, deleteFunction) {
     });
 }
 
+// Função para validar endereços IP
+function validateIp(ip) {
+    const ipPattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    return ipPattern.test(ip);
+}
+
+// Função para validar endereços MAC
+function validateMac(mac) {
+    const macPattern = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+    return macPattern.test(mac);
+}
+
+// Função para mostrar modal de aviso
+function showWarningModal(message) {
+    document.getElementById('warningModalBody').textContent = message;
+    new bootstrap.Modal(document.getElementById('warningModal')).show();
+}
+
+// Funções de edição e exclusão
 function editLocal(row) {
     document.getElementById('localModal').dataset.id = row.id;
     document.getElementById('type-input').value = row.type;
@@ -164,6 +209,10 @@ function editDashboardConfig(row) {
     document.getElementById('a-input').value = row.localAId;
     document.getElementById('b-input').value = row.localBId;
     new bootstrap.Modal(document.getElementById('dashboardConfigModal')).show();
+}
+
+function deleteDashboardConfig(id) {
+    confirmDelete('delete-dashboardConfig', id);
 }
 
 function editRoip(row) {

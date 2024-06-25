@@ -17,8 +17,7 @@ contextBridge.exposeInMainWorld('electron', {
     readFileSync: (filePath) => fs.readFileSync(filePath, 'utf-8')
   },
   ipcRenderer: {
-    send: (channel, data) => ipcRenderer.send(channel, data), // Adiciona função para enviar mensagem IPC
-    // Se você precisar de mais funções IPC, adicione-as aqui
+    send: (channel, data) => ipcRenderer.send(channel, data), 
     on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(event, ...args))
   },
   path: {
@@ -49,7 +48,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Funções adicionais para gerenciar as APIs
+
 const getLocal = () => {
   return testMngr.getLocal();
 }
@@ -62,7 +61,6 @@ const getRoip = () => {
   return testMngr.getRoip();
 }
 
-// Unificar a exposição de APIs no contexto do renderizador
 contextBridge.exposeInMainWorld("api", {
   getLocal: getLocal,
   getDashboardConfig: getDashboardConfig,

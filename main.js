@@ -191,3 +191,58 @@ ipcMain.on('delete-roip', (event, id) => {
     db.close();
   });
 });
+
+// Handler para adicionar um novo Local
+ipcMain.on('add-local', (event, data) => {
+  const dbPath = path.join(__dirname, 'roip.db');
+  const db = new sqlite3.Database(dbPath);
+  const { type, name, mainRoipId, secundaryRoipId } = data;
+  db.run(
+    'INSERT INTO Local (type, name, mainRoipId, secundaryRoipId) VALUES (?, ?, ?, ?)',
+    [type, name, mainRoipId, secundaryRoipId],
+    (err) => {
+      if (err) {
+        console.error('Erro ao adicionar o local:', err.message);
+      }
+      event.reply('request-database');
+      db.close();
+    }
+  );
+});
+
+// Handler para adicionar um novo DashboardConfig
+ipcMain.on('add-dashboardConfig', (event, data) => {
+  const dbPath = path.join(__dirname, 'roip.db');
+  const db = new sqlite3.Database(dbPath);
+  const { operatorId, localAId, localBId } = data;
+  db.run(
+    'INSERT INTO DashboardConfig (operatorId, localAId, localBId) VALUES (?, ?, ?)',
+    [operatorId, localAId, localBId],
+    (err) => {
+      if (err) {
+        console.error('Erro ao adicionar a configuração do dashboard:', err.message);
+      }
+      event.reply('request-database');
+      db.close();
+    }
+  );
+});
+
+// Handler para adicionar um novo Roip
+ipcMain.on('add-roip', (event, data) => {
+  const dbPath = path.join(__dirname, 'roip.db');
+  const db = new sqlite3.Database(dbPath);
+  const { name, ip, mac } = data;
+  db.run(
+    'INSERT INTO Roip (name, ip, mac) VALUES (?, ?, ?)',
+    [name, ip, mac],
+    (err) => {
+      if (err) {
+        console.error('Erro ao adicionar o Roip:', err.message);
+      }
+      event.reply('request-database');
+      db.close();
+    }
+  );
+});
+
