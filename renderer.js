@@ -3,19 +3,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.electron.ipcRenderer.send('request-database');
     };
 
+    const sendData = (channel, data) => {
+        window.electron.ipcRenderer.send(channel, data);
+    };
+
     fetchData();
 
     window.electron.ipcRenderer.on('response-database', (event, data) => {
         const { locals, dashboardConfigs, roips } = data;
 
-        // Create a map of roips for quick lookup
-        const roipMap = createRoipMap(roips);
-
-        // Update locals with information from dashboardConfigs and roips
-        const updatedLocals = updateLocalsWithDashboardConfig(locals, dashboardConfigs, roipMap);
+        updateLocalData(locals, dashboardConfigs, roips);
 
         // Fill tables with updated data
-        fillTable(updatedLocals, "local-body", ["id", "type", "name", "mainRoipId", "secundaryRoipId"]);
+        fillTable(locals, "local-body", ["id", "type", "name", "mainRoipId", "secundaryRoipId"]);
         fillTable(dashboardConfigs, "dashboardConfig-body", ["id", "operatorId", "localAId", "localBId"], editDashboardConfig);
         fillTable(roips, "roip-body", ["id", "name", "ip", "mac"], editRoip, deleteRoip);
 
@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('dashboardConfig').style.display = '';
         document.getElementById('roip').style.display = '';
         document.getElementById('add-roip-btn').style.display = '';
+
+        console.log('pagina carregada');
+
     });
 
     const toggleVisibility = (titleId, tableId, buttonId) => {
@@ -43,9 +46,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleVisibility('dashboardConfig-title', 'dashboardConfig', 'add-roip-btn');
     toggleVisibility('roip-title', 'roip', 'add-roip-btn');
 
-    const sendData = (channel, data) => {
-        window.electron.ipcRenderer.send(channel, data);
-    };
 
     document.getElementById('save-roip-btn').addEventListener('click', () => {
         const data = {
@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         sendData('edit-dashboardConfig', data);
         bootstrap.Modal.getInstance(document.getElementById('dashboardConfigModal')).hide();
         location.reload();
+        
     });
 
     const roipForm = document.getElementById('roip-form');
@@ -117,6 +118,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             showWarningModal('Endereço IP ou MAC inválido!');
         }
     });
+
+    function updateLocalData(locals, dashboardConfigs, roips) {
+        let updatedLocals = [];
+    
+        locals.forEach(local => {
+            let isUpdated = false;
+    
+            dashboardConfigs.forEach(config => {
+                if (local.id === 2) {
+                    const roipA = roips.find(roip => roip.id === config.localAId);
+                    if (roipA) {
+                        local.name = roipA.name;
+                        local.mainRoipId = roipA.id;
+                        isUpdated = true;
+                    }
+                }
+                if (local.id === 3) {
+                    const roipB = roips.find(roip => roip.id === config.localBId);
+                    if (roipB) {
+                        local.name = roipB.name;
+                        local.mainRoipId = roipB.id;
+                        isUpdated = true;
+                    }
+                }
+            });
+    
+            if (isUpdated) {
+                updatedLocals.push(local);
+            }
+        });
+    
+        // Envie os dados atualizados ao back-end para salvar no banco de dados
+        sendData('update-locals', updatedLocals);
+    }
+
+   
 });
 
 function fillTable(rows, tableId, columns, editFunction, deleteFunction) {
@@ -172,30 +209,6 @@ function showWarningModal(message) {
     new bootstrap.Modal(document.getElementById('warningModal')).show();
 }
 
-function createRoipMap(roips) {
-    const roipMap = {};
-    roips.forEach(roip => {
-        roipMap[roip.id] = roip;
-    });
-    return roipMap;
-}
-
-function updateLocalsWithDashboardConfig(locals, dashboardConfigs, roipMap) {
-    return locals.map(local => {
-        if (local.id === 2) { // Example: assuming you want to update local with id 2
-            const dashboardConfig = dashboardConfigs.find(config => config.localAId === local.id);
-            if (dashboardConfig) {
-                const roip = roipMap[dashboardConfig.localAId];
-                if (roip) {
-                    local.name = roip.name;
-                    local.mainRoipId = roip.id;
-                }
-            }
-        }
-        return local;
-    });
-}
-
 function editLocal(row) {
     document.getElementById('localModal').dataset.id = row.id;
     document.getElementById('type-input').value = row.type;
@@ -238,3 +251,8 @@ function confirmDelete(channel, id) {
     document.getElementById('excluirModal').dataset.id = id;
     new bootstrap.Modal(document.getElementById('excluirModal')).show();
 }
+
+
+
+
+

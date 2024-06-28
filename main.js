@@ -109,17 +109,35 @@ ipcMain.on('edit-local', (event, data) => {
   const dbPath = path.join(__dirname, 'roip.db');
   const db = new sqlite3.Database(dbPath);
   const { id, type, name, mainRoipId, secundaryRoipId } = data;
+  console.log('Dados recebidos: ', data);
   db.run(
     'UPDATE Local SET type = ?, name = ?, mainRoipId = ?, secundaryRoipId = ? WHERE id = ?',
     [type, name, mainRoipId, secundaryRoipId, id],
     (err) => {
       if (err) {
         console.error('Erro ao atualizar o local:', err.message);
+      }else {
+        console.log('Local updated successfully'); // Verificar se a consulta de atualização está sendo executada corretamente
       }
       event.reply('request-database');
       db.close();
     }
   );
+});
+
+ipcMain.on('update-locals', async (event, updatedLocals) => {
+  try {
+      for (let local of updatedLocals) {
+          await db.run(
+              `UPDATE local SET name = ?, mainRoipId = ? WHERE id = ?`,
+              [local.name, local.mainRoipId, local.id]
+          );
+      }
+      event.reply('update-locals-success', { status: 'success' });
+  } catch (error) {
+      console.error('Erro ao atualizar locais:', error);
+      event.reply('update-locals-failure', { status: 'failure', error: error.message });
+  }
 });
 
 ipcMain.on('edit-dashboardConfig', (event, data) => {
