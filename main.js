@@ -6,8 +6,8 @@ const sqlite3 = require('sqlite3').verbose();
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1400,
+    height: 1000,
     webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, './preload.js'),
@@ -116,7 +116,7 @@ ipcMain.on('edit-local', (event, data) => {
     (err) => {
       if (err) {
         console.error('Erro ao atualizar o local:', err.message);
-      }else {
+      } else {
         console.log('Local updated successfully'); // Verificar se a consulta de atualização está sendo executada corretamente
       }
       event.reply('request-database');
@@ -126,17 +126,19 @@ ipcMain.on('edit-local', (event, data) => {
 });
 
 ipcMain.on('update-locals', async (event, updatedLocals) => {
+  const dbPath = path.join(__dirname, 'roip.db');
+  const db = new sqlite3.Database(dbPath);
   try {
-      for (let local of updatedLocals) {
-          await db.run(
-              `UPDATE local SET name = ?, mainRoipId = ? WHERE id = ?`,
-              [local.name, local.mainRoipId, local.id]
-          );
-      }
-      event.reply('update-locals-success', { status: 'success' });
+    for (let local of updatedLocals) {
+      await db.run(
+        `UPDATE local SET name = ?, mainRoipId = ? WHERE id = ?`,
+        [local.name, local.mainRoipId, local.id]
+      );
+    }
+    event.reply('update-locals-success', { status: 'success' });
   } catch (error) {
-      console.error('Erro ao atualizar locais:', error);
-      event.reply('update-locals-failure', { status: 'failure', error: error.message });
+    console.error('Erro ao atualizar locais:', error);
+    event.reply('update-locals-failure', { status: 'failure', error: error.message });
   }
 });
 

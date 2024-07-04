@@ -37,13 +37,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         titleElement.addEventListener('click', () => {
             const isHidden = tableElement.style.display === 'none';
             tableElement.style.display = isHidden ? '' : 'none';
-            buttonElement.style.display = isHidden ? '' : 'none';
+            if (buttonId) buttonElement.style.display = isHidden ? '' : 'none';
             arrowElement.classList.toggle('down', isHidden);
         });
     };
 
-    toggleVisibility('local-title', 'local', 'add-roip-btn');
-    toggleVisibility('dashboardConfig-title', 'dashboardConfig', 'add-roip-btn');
+    toggleVisibility('local-title', 'local', null);
+    toggleVisibility('dashboardConfig-title', 'dashboardConfig', null);
     toggleVisibility('roip-title', 'roip', 'add-roip-btn');
 
 
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         sendData('edit-dashboardConfig', data);
         bootstrap.Modal.getInstance(document.getElementById('dashboardConfigModal')).hide();
         location.reload();
-        
+
     });
 
     const roipForm = document.getElementById('roip-form');
@@ -121,10 +121,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function updateLocalData(locals, dashboardConfigs, roips) {
         let updatedLocals = [];
-    
+
         locals.forEach(local => {
             let isUpdated = false;
-    
+
             dashboardConfigs.forEach(config => {
                 if (local.id === 2) {
                     const roipA = roips.find(roip => roip.id === config.localAId);
@@ -143,22 +143,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
             });
-    
+
             if (isUpdated) {
                 updatedLocals.push(local);
             }
         });
-    
+
         // Envie os dados atualizados ao back-end para salvar no banco de dados
         sendData('update-locals', updatedLocals);
     }
 
-   
+
 });
 
 function fillTable(rows, tableId, columns, editFunction, deleteFunction) {
     let tableBody = document.getElementById(tableId);
-    tableBody.innerHTML = ''; 
+    tableBody.innerHTML = '';
 
     rows.forEach(row => {
         let newRow = tableBody.insertRow();

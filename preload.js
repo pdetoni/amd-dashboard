@@ -17,20 +17,20 @@ contextBridge.exposeInMainWorld('electron', {
     readFileSync: (filePath) => fs.readFileSync(filePath, 'utf-8')
   },
   ipcRenderer: {
-    send: (channel, data) => ipcRenderer.send(channel, data), 
+    send: (channel, data) => ipcRenderer.send(channel, data),
     on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(event, ...args))
   },
   path: {
     join: (...args) => path.join(...args)
   },
   getLocal: () => {
-    const sql  = "SELECT * FROM Local";
+    const sql = "SELECT * FROM Local";
     let stmt = db.prepare(sql);
     let res = stmt.all();
     return res;
   },
   getDashboardConfig: () => {
-    const sql  = "SELECT * FROM DashboardConfig";
+    const sql = "SELECT * FROM DashboardConfig";
     let stmt = db.prepare(sql);
     let res = stmt.all();
     return res;
