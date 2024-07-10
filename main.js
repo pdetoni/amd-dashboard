@@ -266,3 +266,24 @@ ipcMain.on('add-roip', (event, data) => {
   );
 });
 
+ipcMain.on('edit-secRoip', (event, data) => {
+  const dbPath = path.join(__dirname, 'roip.db');
+  const db = new sqlite3.Database(dbPath);
+  const { id, secundaryRoipId } = data;
+  
+  db.run(
+    'UPDATE Local SET secundaryRoipId = ? WHERE id = ?',
+    [secundaryRoipId, id],
+    (err) => {
+      if (err) {
+        console.error('Erro ao atualizar o RoIP Secundário:', err.message);
+      } 
+      event.reply('request-database');
+      db.close();
+    }
+  );
+});
+
+
+
+
