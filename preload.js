@@ -17,26 +17,24 @@ contextBridge.exposeInMainWorld('electron', {
     readFileSync: (filePath) => fs.readFileSync(filePath, 'utf-8')
   },
   ipcRenderer: {
-    send: (channel, data) => ipcRenderer.send(channel, data), // Adiciona função para enviar mensagem IPC
-    // Se você precisar de mais funções IPC, adicione-as aqui
+    send: (channel, data) => ipcRenderer.send(channel, data),
     on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(event, ...args))
   },
   path: {
     join: (...args) => path.join(...args)
   },
   getLocal: () => {
-    const sql  = "SELECT * FROM Local";
+    const sql = "SELECT * FROM Local";
     let stmt = db.prepare(sql);
     let res = stmt.all();
     return res;
   },
   getDashboardConfig: () => {
-    const sql  = "SELECT * FROM DashboardConfig";
+    const sql = "SELECT * FROM DashboardConfig";
     let stmt = db.prepare(sql);
     let res = stmt.all();
     return res;
   }
-  
 });
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -63,15 +61,8 @@ const getRoip = () => {
   return testMngr.getRoip();
 }
 
-contextBridge.exposeInMainWorld("api",{
-  geLocal: getLocal
-})
-
-contextBridge.exposeInMainWorld("api",{
-  getDashboardConfig: getDashboardConfig
-})
-
-contextBridge.exposeInMainWorld("api",{
+contextBridge.exposeInMainWorld("api", {
+  getLocal: getLocal,
+  getDashboardConfig: getDashboardConfig,
   getRoip: getRoip
-})
-
+});

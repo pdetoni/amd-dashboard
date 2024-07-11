@@ -1,13 +1,27 @@
-// const sqlite = require('better-sqlite3') 
-// const db = new sqlite("./roip.db")
-// exports.db = db
+const sqlite3 = require('sqlite3').verbose();
+const path = require('node:path');
 
-const Database = require('better-sqlite3');
-const path = require('path');
+const dbPath = path.join(__dirname, 'roip.db');
+const db = new sqlite3.Database(dbPath, (err) => {
+  if (err) {
+    console.error('Erro ao abrir o banco de dados:', err.message);
+  }
+});
 
-const dbPath = path.resolve(__dirname, './roip.db');
-const db = new Database(dbPath, { verbose: console.log });
+exports.db = db;
 
-module.exports = {
-    db
+exports.getLocal = () => {
+  try {
+    const sql = "SELECT * FROM Local";
+    db.all(sql, (err, rows) => {
+      if (err) {
+        console.error('Erro ao obter os locais:', err.message);
+        return [];
+      }
+      return rows;
+    });
+  } catch (error) {
+    console.error('Error fetching Local data:', error.message);
+    return []; // Return an empty array or handle error as per your application's logic
+  }
 };
