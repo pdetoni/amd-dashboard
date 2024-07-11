@@ -22,7 +22,7 @@
     "rebuild": "^0.1.2"
   },
   "dependencies": {
-    "better-sqlite3": "^11.0.0",
+    "better-sqlite3": "^11.1.2",
     "bootstrap": "^5.3.3",
     "sqlite3": "^5.1.7"
   }
