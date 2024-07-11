@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             fetchData();
             location.reload();
         } else {
-            showWarningModal('Invalid IP or MAC address!');
+            showWarningModal('Endereço IP ou MAC inválido!');
         }
     });
 
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let editCell = newRow.insertCell(columns.length);
                 let editButton = document.createElement('button');
                 editButton.className = 'btn btn-warning';
-                editButton.textContent = 'Editar';
+                editButton.textContent = tableId === 'local-body' ? 'SecRoip' : 'Editar';
                 editButton.onclick = () => editFunction(row);
                 editCell.appendChild(editButton);
             }
@@ -298,14 +298,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 deleteCell.appendChild(deleteButton);
             }
 
-            if (editSecRoip) {
-                let editSecRoipCell = newRow.insertCell(columns.length + 1);
-                let editSecRoipButton = document.createElement('button');
-                editSecRoipButton.className = 'btn btn-info';
-                editSecRoipButton.textContent = 'Editar SecRoip';
-                editSecRoipButton.onclick = () => editSecRoip(row);
-                editSecRoipCell.appendChild(editSecRoipButton);
-            }
+            // if (editSecRoip) {
+            //     let editSecRoipCell = newRow.insertCell(columns.length + 1);
+            //     let editSecRoipButton = document.createElement('button');
+            //     editSecRoipButton.className = 'btn btn-info';
+            //     editSecRoipButton.textContent = 'SecRoip';
+            //     editSecRoipButton.onclick = () => editSecRoip(row);
+            //     editSecRoipCell.appendChild(editSecRoipButton);
+            // }
         });
     }
 
