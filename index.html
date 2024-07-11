@@ -7,7 +7,8 @@
         content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; style-src-elem 'self' 'unsafe-inline'">
     <link href="./styles.css" rel="stylesheet">
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
     <title>Dashboard</title>
 </head>
 
@@ -18,70 +19,77 @@
     </div>
 
 
-    <div class="tables-container">
-        <div class="row row-cols-2">
-            <div class="col">
-                <h1 id="local-title"><span class="arrow down">&rarr;</span>Local</h1>
-                <div class="table-responsive">
-                    <table id="local" class="table table-striped table-bordered" style="display: none;">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>id</th>
-                                <th>type</th>
-                                <th>name</th>
-                                <th>mainRoipId</th>
-                                <th>secundaryRoipId</th>
-                                <th>Editar</th>
-                            </tr>
-                        </thead>
-                        <tbody id="local-body">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col">
-                <h1 id="dashboardConfig-title"><span class="arrow down">&rarr;</span>DashboardConfig</h1>
-                <div class="table-responsive">
-                    <table id="dashboardConfig" class="table table-striped table-bordered" style="display: none;">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>id</th>
-                                <th>operatorId</th>
-                                <th>localAId</th>
-                                <th>localBId</th>
-                                <th>Editar</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboardConfig-body">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="col">
-                <h1 id="roip-title"><span class="arrow down">&rarr;</span>Roips</h1>
-                <div class="table-responsive">
-                    <table id="roip" class="table table-striped table-bordered" style="display: none;">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>id</th>
-                                <th>name</th>
-                                <th>ip</th>
-                                <th>mac</th>
-                                <th>Editar</th>
-                                <th>Excluir</th>
-                            </tr>
-                        </thead>
-                        <tbody id="roip-body">
-                        </tbody>
-                    </table>
-                    <div class="text-center">
-                        <button id="add-roip-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoipModal" style="background-color: rgb(96, 41, 169); border-color:rgb(96, 41, 169) ;">Adicionar Roip</button>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
+    <!-- <div class="tables-container">
+        <div class="row row-cols-2">-->
+    <!-- <div class="col">  -->
+    <h1 id="local-title"><span class="arrow down">&rarr;</span>Local</h1>
+    <div class="table-responsive">
+        <table id="local" class="table table-striped table-bordered" style="display: none;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>id</th>
+                    <th>type</th>
+                    <th>name</th>
+                    <th>mainRoipId</th>
+                    <th>secundaryRoipId</th>
+                    <th>Editar</th>
+                </tr>
+            </thead>
+            <tbody id="local-body">
+            </tbody>
+        </table>
     </div>
+    <!-- </div>
+            <div class="col"> -->
+    <h1 id="dashboardConfig-title"><span class="arrow down">&rarr;</span>DashboardConfig</h1>
+    <div class="table-responsive">
+        <table id="dashboardConfig" class="table table-striped table-bordered" style="display: none;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>id</th>
+                    <th>operatorId</th>
+                    <th>localAId</th>
+                    <th>localBId</th>
+                    <th>mainRoipAId</th>
+                    <th>secundaryRoipAId</th>
+                    <th>mainRoipBId</th>
+                    <th>secundaryRoipBId</th>
+                    <th>roipAId</th>
+                    <th>roipBId</th>
+                    <th>Editar</th>
+                </tr>
+            </thead>
+            <tbody id="dashboardConfig-body">
+            </tbody>
+        </table>
+    </div>
+    <!-- </div>
+            <div class="col"> -->
+    <h1 id="roip-title"><span class="arrow down">&rarr;</span>Roips</h1>
+    <div class="table-responsive">
+        <table id="roip" class="table table-striped table-bordered" style="display: none;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>ip</th>
+                    <th>mac</th>
+                    <th>Editar</th>
+                    <th>Excluir</th>
+                </tr>
+            </thead>
+            <tbody id="roip-body">
+            </tbody>
+        </table>
+        <div class="text-center">
+            <button id="add-roip-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoipModal"
+                style="background-color: rgb(96, 41, 169); border-color:rgb(96, 41, 169) ;">Adicionar Roip</button>
+        </div>
+
+    </div>
+    <!-- </div>
+            </div>
+    </div> -->
 
 
     <!-- Modais para edição -->
@@ -259,7 +267,7 @@
             </div>
         </div>
     </div>
-    
+
 
 
     <script src="renderer.js"></script>
