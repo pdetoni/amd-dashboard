@@ -118,11 +118,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     
         // Validate the IP and MAC address before sending the data
         if (validateIp(data.ip) && validateMac(data.mac)) {
+            if(!verificarDupRoipExistente(data, roips, parseInt(data.id))){
             console.log('Data validated');
             sendData('edit-roip', data);
             bootstrap.Modal.getInstance(document.getElementById('roipModal')).hide();
             fetchData();
             location.reload();
+            } else {
+                showWarningModal('Já existe um ROIP com esses dados!');
+            }
         } else {
             showWarningModal('Endereço IP ou MAC inválido!');
         }
@@ -268,6 +272,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             roip.mac === newRoip.mac
         );
     }
+
+    function verificarDupRoipExistente(newRoip, roips, editingId) {
+        return roips.some(roip => 
+            roip.id !== editingId &&
+            (roip.name === newRoip.name || 
+            roip.ip === newRoip.ip || 
+            roip.mac === newRoip.mac)
+        );
+    }
     
 
     function fillTable(rows, tableId, columns, editFunction, deleteFunction, editSecRoip) {
@@ -307,14 +320,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             //     editSecRoipCell.appendChild(editSecRoipButton);
             // }
         });
-    }
-
-    function getDashData(dashId, dashboardConfigs) {
-        return dashboardConfigs.find(dashboardConfig => dashboardConfig.id === dashId);
-    }
-
-    function getRoipData(roipId, roips) {
-        return roips.find(roip => roip.id === roipId);
     }
 
     function validateIp(ip) {
