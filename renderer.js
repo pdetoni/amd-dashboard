@@ -29,11 +29,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         fillTable(locals, "local-body", ["id", "type", "name", "mainRoipId", "secundaryRoipId"], editSecond);
         fillTable(dashboardConfigs, "dashboardConfig-body", ["id", "operatorId", "localAId", "localBId"], editDashboardConfig);
         fillTable(roips, "roip-body", ["id", "name", "ip", "mac"], editRoip, deleteRoip);
+        fillTable(supervisors, "supervisor-body", ["id", "userId", "operatorAId", "operatorBId"]);
+        fillTable(users, "user-body", ["id", "name", "function", "localId"]);
 
         document.getElementById('local').style.display = '';
         document.getElementById('dashboardConfig').style.display = '';
         document.getElementById('roip').style.display = '';
         document.getElementById('add-roip-btn').style.display = '';
+        document.getElementById('supervisor').style.display = '';
+        document.getElementById('user').style.display = '';
 
         console.log('pagina carregada');
     });
@@ -55,6 +59,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleVisibility('local-title', 'local', null);
     toggleVisibility('dashboardConfig-title', 'dashboardConfig', null);
     toggleVisibility('roip-title', 'roip', 'add-roip-btn');
+    toggleVisibility('supervisor-title', 'supervisor', null);
+    toggleVisibility('user-title', 'user', null);
 
     document.getElementById('save-secRoip-btn').addEventListener('click', () => {
         const data = {

@@ -48,7 +48,7 @@ body {
 
 /* Estilo para as células do cabeçalho */
 #local th {
-  background-color: #1569b8;
+  background-color: #3585cf;
   border: 1px solid #000000;
   padding: 8px;
   text-align: center;
@@ -63,7 +63,7 @@ body {
   background-color: #ffffff;
 }
 
-#local td:hover {
+td:hover {
   background-color: #bcbcbc;
 }
 
@@ -74,7 +74,7 @@ body {
 
 /* Estilo para as células do cabeçalho */
 #dashboardConfig th {
-  background-color: #370eaa;
+  background-color: #3b67b8;
   border: 1px solid #000000;
   padding: 8px;
   text-align: center;
@@ -100,7 +100,7 @@ body {
 
 /* Estilo para as células do cabeçalho */
 #roip th {
-  background-color: #1b0067;
+  background-color: #2b40b9;
   border: 1px solid #000000;
   padding: 8px;
   text-align: center;
@@ -118,6 +118,60 @@ body {
 #roip td:hover {
   background-color: #bcbcbc;
 }
+
+#supervisor {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Estilo para as células do cabeçalho */
+#supervisor th {
+  background-color: #232a96;
+  border: 1px solid #000000;
+  padding: 8px;
+  text-align: center;
+  color: #ffffff;
+}
+
+/* Estilo para as células dos dados */
+#supervisor td {
+  border: 1px solid #000000;
+  padding: 8px;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+#supervisor td:hover {
+  background-color: #bcbcbc;
+}
+
+#user {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Estilo para as células do cabeçalho */
+#user th {
+  background-color: #1b0067;
+  border: 1px solid #000000;
+  padding: 8px;
+  text-align: center;
+  color: #ffffff;
+}
+
+/* Estilo para as células dos dados */
+#user td {
+  border: 1px solid #000000;
+  padding: 8px;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+#user td:hover {
+  background-color: #bcbcbc;
+}
+
+
 
 .tables-container {
   /* max-width: 95vw; */
