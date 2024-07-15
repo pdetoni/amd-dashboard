@@ -46,11 +46,11 @@ app.on('window-all-closed', function () {
 // code. You can also put them in separate files and require them here.
 
 ipcMain.on('request-database', (event) => {
-  const dbPath = path.join(__dirname, 'roip.db'); // Caminho para o banco de dados
+  const dbPath = path.join(__dirname, 'roip.db'); 
   const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
       console.error('Erro ao abrir o banco de dados:', err.message);
-      event.reply('response-database', { locals: [], dashboardConfigs: [], roips: [] }); // Envie uma resposta vazia em caso de erro
+      event.reply('response-database', { locals: [], dashboardConfigs: [], roips: [] }); 
       return;
     }
 
@@ -87,13 +87,35 @@ ipcMain.on('request-database', (event) => {
       });
     });
 
-    Promise.all([localsPromise, dashboardConfigsPromise, roipsPromise])
+    let supervisorsPromise = new Promise((resolve, reject) => {
+      db.all('SELECT * FROM Supervisor', (err, rows) => {
+        if (err) {
+          console.error('Erro ao obter os Supervisores:', err.message);
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+
+    let usersPromise = new Promise((resolve, reject) => {
+      db.all('SELECT * FROM User', (err, rows) => {
+        if (err) {
+          console.error('Erro ao obter os Users:', err.message);
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+
+    Promise.all([localsPromise, dashboardConfigsPromise, roipsPromise, supervisorsPromise, usersPromise])
       .then((values) => {
-        const [locals, dashboardConfigs, roips] = values;
-        event.reply('response-database', { locals, dashboardConfigs, roips }); // Envie os resultados de volta para o processo de renderização
+        const [locals, dashboardConfigs, roips, supervisors, users] = values;
+        event.reply('response-database', { locals, dashboardConfigs, roips, supervisors, users }); // Envie os resultados de volta para o processo de renderização
       })
       .catch((err) => {
-        event.reply('response-database', { locals: [], dashboardConfigs: [], roips: [] }); // Envie uma resposta vazia em caso de erro
+        event.reply('response-database', { locals: [], dashboardConfigs: [], roips: [], supervisors: [], users: [] }); // Envie uma resposta vazia em caso de erro
       })
       .finally(() => {
         db.close((err) => {
@@ -212,7 +234,7 @@ ipcMain.on('delete-roip', (event, id) => {
   });
 });
 
-// Handler para adicionar um novo Local
+
 ipcMain.on('add-local', (event, data) => {
   const dbPath = path.join(__dirname, 'roip.db');
   const db = new sqlite3.Database(dbPath);
@@ -230,7 +252,7 @@ ipcMain.on('add-local', (event, data) => {
   );
 });
 
-// Handler para adicionar um novo DashboardConfig
+
 ipcMain.on('add-dashboardConfig', (event, data) => {
   const dbPath = path.join(__dirname, 'roip.db');
   const db = new sqlite3.Database(dbPath);
@@ -248,7 +270,7 @@ ipcMain.on('add-dashboardConfig', (event, data) => {
   );
 });
 
-// Handler para adicionar um novo Roip
+
 ipcMain.on('add-roip', (event, data) => {
   const dbPath = path.join(__dirname, 'roip.db');
   const db = new sqlite3.Database(dbPath);

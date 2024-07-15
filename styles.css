@@ -19,12 +19,14 @@ body {
   display: none;
 }
 
-h1 {
+.title {
   cursor: pointer;
   user-select: none;
+  font-weight: bold;
+  font-size: 1.5em;
 }
 
-h1:hover {
+.title:hover {
   background-color: #000f7f;
   color: #ffffff;
 }

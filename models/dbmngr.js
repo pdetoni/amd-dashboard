@@ -10,18 +10,4 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 exports.db = db;
 
-// exports.getLocal = () => {
-//   try {
-//     const sql = "SELECT * FROM Local";
-//     db.all(sql, (err, rows) => {
-//       if (err) {
-//         console.error('Erro ao obter os locais:', err.message);
-//         return [];
-//       }
-//       return rows;
-//     });
-//   } catch (error) {
-//     console.error('Error fetching Local data:', error.message);
-//     return []; // Return an empty array or handle error as per your application's logic
-//   }
-// };
+

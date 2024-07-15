@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     let roips = [];
     let dashboardConfigs = [];
     let locals = [];
+    let supervisors = [];
+    let users = [];
 
     const fetchData = () => {
         window.electron.ipcRenderer.send('request-database');
@@ -14,10 +16,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchData();
 
     window.electron.ipcRenderer.on('response-database', (event, data) => {
-        const { locals: localsData, dashboardConfigs: dashboardConfigsData, roips: roipsData } = data;
+        const { locals: localsData, dashboardConfigs: dashboardConfigsData, roips: roipsData, supervisors: supervisorsData, users: usersData } = data;
         roips = roipsData;
         dashboardConfigs = dashboardConfigsData;
         locals = localsData;
+        supervisors = supervisorsData;
+        users = usersData;
 
         updateLocalData(locals, dashboardConfigs, roips);
 
