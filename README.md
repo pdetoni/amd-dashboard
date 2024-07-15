@@ -1,2 +1,2 @@
 # amd-dashboard
-Repositório criado para desenvolver um Dashboard com uso de electron + sqlite.
+Repositório criado para desenvolver um Dashboard com uso de Electron + SQLite.
