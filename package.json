@@ -16,7 +16,7 @@
   ],
   "author": "pdpereira2003@gmail.com",
   "devDependencies": {
-    "electron": "^30.2.0",
+    "electron": "^31.3.1",
     "electron-builder": "^24.13.3",
     "electron-rebuild": "^3.2.9",
     "rebuild": "^0.1.2"
